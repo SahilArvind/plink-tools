@@ -19,7 +19,7 @@ int main() {
     char output_dataset[MAX_FILENAME_LENGTH];
 
     // Step 1: Take user input for raw file name
-    printf("Enter the raw file name: ");
+    printf("Enter the raw file name (without extension): ");
     scanf("%s", raw_file);
 
     // Construct and run command a)
