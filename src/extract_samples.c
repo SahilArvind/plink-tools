@@ -96,7 +96,11 @@ int main() {
 
     // Run plink.exe command
     char plinkCommand[MAX_LINE_LENGTH * 2];
-    snprintf(plinkCommand, sizeof(plinkCommand), "plink.exe --bfile %s --keep %s --allow-no-sex --make-bed --out extracted", inputFileName, outputFileName);
+    #ifdef _WIN32
+    snprintf(plinkCommand, sizeof(plinkCommand), "plink.exe --bfile %s --keep %s --allow-no-sex --make-bed --out extracted > NUL 2>&1", inputFileName, outputFileName);
+    #else
+    snprintf(plinkCommand, sizeof(plinkCommand), "plink.exe --bfile %s --keep %s --allow-no-sex --make-bed --out extracted > /dev/null 2>&1", inputFileName, outputFileName);
+    #endif
     system(plinkCommand);
 
     return 0;
