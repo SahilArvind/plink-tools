@@ -8,12 +8,13 @@
 // Function prototypes
 void convertAncestryDNA();
 void convertFTDNA_MyHeritage(char *file_type);
+void convertMapMyGenome();
 
 int main() {
     char file_type[200];
 
     // Prompting user for file type
-    printf("Enter the file type (ancestrydna, ftdna, myheritage): ");
+    printf("Enter the file type (ancestrydna, ftdna, myheritage, mapmygenome): ");
     scanf("%s", file_type);
 
     // Convert file_type to lowercase
@@ -30,12 +31,59 @@ int main() {
         system("python sort.py");
     } else if (strcmp(file_type, "myheritage") == 0) {
         convertFTDNA_MyHeritage(file_type);
+    } else if (strcmp(file_type, "mapmygenome") == 0) {
+        convertMapMyGenome();
+        system("python sort.py");
     } else {
         printf("Invalid file type.\n");
         return 1;
     }
 
     return 0;
+}
+
+void convertMapMyGenome() {
+    char inputFileName[MAX_LINE_LENGTH], outputFileName[MAX_LINE_LENGTH];
+    FILE *inputFile, *outputFile;
+    char line[MAX_LINE_LENGTH];
+
+    // Prompting user for input file name
+    printf("Enter the input file name: ");
+    scanf("%s", inputFileName);
+
+    // Opening input file
+    inputFile = fopen(inputFileName, "r");
+    if (inputFile == NULL) {
+        printf("Error opening input file.\n");
+        exit(1);
+    }
+
+    // Default output file name for MapMyGenome
+    strcpy(outputFileName, "data.txt");
+
+    // Opening output file
+    outputFile = fopen(outputFileName, "w");
+    if (outputFile == NULL) {
+        printf("Error creating output file.\n");
+        fclose(inputFile);
+        exit(1);
+    }
+
+    // Read each line from the input file
+    while (fgets(line, MAX_LINE_LENGTH, inputFile) != NULL) {
+        // Check if the line contains strings like "RSID" or "#"
+        if (strstr(line, "rsid") != NULL || strstr(line, "#") != NULL) {
+            // If the line contains such strings, skip writing it to the output file
+            continue; // Skip processing for this line
+        }
+
+        // Write the line to the output file
+        fputs(line, outputFile);
+    }
+
+    // Closing files
+    fclose(inputFile);
+    fclose(outputFile);
 }
 
 void convertAncestryDNA() {
