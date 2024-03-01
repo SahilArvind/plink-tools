@@ -10,12 +10,13 @@ void convertAncestryDNA();
 void convertFTDNA_MyHeritage(char *file_type);
 void convertMapMyGenome();
 void convertLivingDNA();
+void convertFamilyFinder();
 
 int main() {
     char file_type[200];
 
     // Prompting user for file type
-    printf("Enter the file type (ancestrydna, ftdna, ftdna_old, myheritage, mapmygenome, livingdna): ");
+    printf("Enter the file type (AncestryDNA, FTDNA_new, FTDNA_old, MyHeritage, Mapmygenome, LivingDNA, FamilyFinder): ");
     scanf("%s", file_type);
 
     // Convert file_type to lowercase
@@ -26,9 +27,8 @@ int main() {
     // Checking the file type and calling the appropriate function
     if (strcmp(file_type, "ancestrydna") == 0) {
         convertAncestryDNA();
-    } else if (strcmp(file_type, "ftdna") == 0) {
+    } else if (strcmp(file_type, "ftdna_new") == 0) {
         convertFTDNA_MyHeritage(file_type);
-        // Run the python script after converting ftdna file
         system("python sort.py");
     } else if (strcmp(file_type, "myheritage") == 0 || strcmp(file_type, "ftdna_old") == 0) {
         convertFTDNA_MyHeritage(file_type);
@@ -37,6 +37,9 @@ int main() {
         system("python sort.py");
     } else if (strcmp(file_type, "livingdna") == 0) {
         convertLivingDNA();
+        } else if (strcmp(file_type, "familyfinder") == 0) {
+        convertFamilyFinder();
+        system("python sort.py");
     } else {
         printf("Invalid file type.\n");
         return 1;
@@ -311,4 +314,86 @@ void convertLivingDNA() {
     fclose(outputFile);
 
     printf("File conversion done successfully!\n");
+}
+
+void convertFamilyFinder() {
+    char inputFileName[MAX_LINE_LENGTH], outputFileName[MAX_LINE_LENGTH];
+    FILE *inputFile, *outputFile;
+    char line[MAX_LINE_LENGTH];
+
+    // Prompting user for input file name
+    printf("Enter the input file name: ");
+    scanf("%s", inputFileName);
+
+    // Opening input file
+    inputFile = fopen(inputFileName, "r");
+    if (inputFile == NULL) {
+        printf("Error opening input file.\n");
+        exit(1);
+    }
+
+    // Default output file name for FamilyFinder
+    strcpy(outputFileName, "data.txt");
+
+    // Opening output file
+    outputFile = fopen(outputFileName, "w");
+    if (outputFile == NULL) {
+        printf("Error creating output file.\n");
+        fclose(inputFile);
+        exit(1);
+    }
+
+    // Read each line from the input file
+    while (fgets(line, MAX_LINE_LENGTH, inputFile) != NULL) {
+        // Check if the line contains the string "#"
+        if (strstr(line, "#") != NULL) {
+            // If the line contains such strings, skip writing it to the output file
+            continue; // Skip processing for this line
+        }
+
+        // Replace commas with tabs
+        for (int i = 0; line[i] != '\0'; i++) {
+            if (line[i] == ',') {
+                line[i] = '\t';
+            }
+        }
+
+        // Tokenize the line to concatenate 4th and 5th column elements
+        char *token = strtok(line, "\t");
+        int column_count = 1;
+
+        while (token != NULL) {
+            if (column_count == 4) {
+                // Concatenate the 4th and 5th column elements
+                char nextToken[MAX_LINE_LENGTH];
+                char *nextTokenPtr = strtok(NULL, "\t");
+                if (nextTokenPtr != NULL) {
+                    strcpy(nextToken, nextTokenPtr);
+                    strcat(token, nextToken);
+                }
+            } else if (column_count == 5) {
+                // Skip writing the 5th column element
+                token = strtok(NULL, "\t");
+                column_count++;
+                continue;
+            }
+
+            // Write the token to the output file
+            fprintf(outputFile, "%s", token);
+
+            // Move to the next token
+            token = strtok(NULL, "\t");
+
+            // Write a tab delimiter if not at the end of the line
+            if (token != NULL) {
+                fprintf(outputFile, "\t");
+            }
+
+            column_count++;
+        }
+    }
+
+    // Closing files
+    fclose(inputFile);
+    fclose(outputFile);
 }
