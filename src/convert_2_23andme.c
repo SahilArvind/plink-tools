@@ -15,7 +15,7 @@ int main() {
     char file_type[200];
 
     // Prompting user for file type
-    printf("Enter the file type (ancestrydna, ftdna, myheritage, mapmygenome, livingdna): ");
+    printf("Enter the file type (ancestrydna, ftdna, ftdna_old, myheritage, mapmygenome, livingdna): ");
     scanf("%s", file_type);
 
     // Convert file_type to lowercase
@@ -30,7 +30,7 @@ int main() {
         convertFTDNA_MyHeritage(file_type);
         // Run the python script after converting ftdna file
         system("python sort.py");
-    } else if (strcmp(file_type, "myheritage") == 0) {
+    } else if (strcmp(file_type, "myheritage") == 0 || strcmp(file_type, "ftdna_old") == 0) {
         convertFTDNA_MyHeritage(file_type);
     } else if (strcmp(file_type, "mapmygenome") == 0) {
         convertMapMyGenome();
@@ -187,8 +187,8 @@ void convertFTDNA_MyHeritage(char *file_type) {
     // Default output file name for FTDNA
     strcpy(outputFileName, "data.txt");
 
-    // For MyHeritage, prompt user for output file name
-    if (strcmp(file_type, "myheritage") == 0) {
+    // For MyHeritage or FTDNA_old, prompt user for output file name
+    if (strcmp(file_type, "myheritage") == 0 || strcmp(file_type, "ftdna_old") == 0) {
         printf("Enter the name of the output file: ");
         scanf("%s", outputFileName);
     }
@@ -231,7 +231,7 @@ void convertFTDNA_MyHeritage(char *file_type) {
     fclose(inputFile);
     fclose(outputFile);
 
-    if (strcmp(file_type, "myheritage") == 0) {
+    if (strcmp(file_type, "myheritage") == 0 || strcmp(file_type, "ftdna_old") == 0) {
         printf("File conversion done successfully!\n");
     }
 }
