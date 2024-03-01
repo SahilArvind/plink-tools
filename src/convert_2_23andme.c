@@ -9,13 +9,12 @@
 void convertAncestryDNA();
 void convertFTDNA_MyHeritage(char *file_type);
 void convertMapMyGenome();
-void convertLivingDNA();
 
 int main() {
     char file_type[200];
 
     // Prompting user for file type
-    printf("Enter the file type (ancestrydna, ftdna, ftdna_old, myheritage, mapmygenome, livingdna): ");
+    printf("Enter the file type (ancestrydna, ftdna, myheritage, mapmygenome): ");
     scanf("%s", file_type);
 
     // Convert file_type to lowercase
@@ -30,13 +29,11 @@ int main() {
         convertFTDNA_MyHeritage(file_type);
         // Run the python script after converting ftdna file
         system("python sort.py");
-    } else if (strcmp(file_type, "myheritage") == 0 || strcmp(file_type, "ftdna_old") == 0) {
+    } else if (strcmp(file_type, "myheritage") == 0) {
         convertFTDNA_MyHeritage(file_type);
     } else if (strcmp(file_type, "mapmygenome") == 0) {
         convertMapMyGenome();
         system("python sort.py");
-    } else if (strcmp(file_type, "livingdna") == 0) {
-        convertLivingDNA();
     } else {
         printf("Invalid file type.\n");
         return 1;
@@ -187,8 +184,8 @@ void convertFTDNA_MyHeritage(char *file_type) {
     // Default output file name for FTDNA
     strcpy(outputFileName, "data.txt");
 
-    // For MyHeritage or FTDNA_old, prompt user for output file name
-    if (strcmp(file_type, "myheritage") == 0 || strcmp(file_type, "ftdna_old") == 0) {
+    // For MyHeritage, prompt user for output file name
+    if (strcmp(file_type, "myheritage") == 0) {
         printf("Enter the name of the output file: ");
         scanf("%s", outputFileName);
     }
@@ -231,84 +228,7 @@ void convertFTDNA_MyHeritage(char *file_type) {
     fclose(inputFile);
     fclose(outputFile);
 
-    if (strcmp(file_type, "myheritage") == 0 || strcmp(file_type, "ftdna_old") == 0) {
+    if (strcmp(file_type, "myheritage") == 0) {
         printf("File conversion done successfully!\n");
     }
-}
-
-void convertLivingDNA() {
-    char inputFileName[MAX_LINE_LENGTH], outputFileName[MAX_LINE_LENGTH];
-    FILE *inputFile, *outputFile;
-    char line[MAX_LINE_LENGTH];
-
-    // Prompting user for input file name
-    printf("Enter the input file name: ");
-    scanf("%s", inputFileName);
-
-    // Opening input file
-    inputFile = fopen(inputFileName, "r");
-    if (inputFile == NULL) {
-        printf("Error opening input file.\n");
-        exit(1);
-    }
-
-    // Prompting user for output file name
-    printf("Enter the output file name: ");
-    scanf("%s", outputFileName);
-
-    // Opening output file
-    outputFile = fopen(outputFileName, "w");
-    if (outputFile == NULL) {
-        printf("Error creating output file.\n");
-        fclose(inputFile);
-        exit(1);
-    }
-
-    // Read each line from the input file
-    while (fgets(line, MAX_LINE_LENGTH, inputFile) != NULL) {
-        // Check if the line contains strings like "rsid" or "#"
-        if (strstr(line, "rsid") != NULL || strstr(line, "#") != NULL) {
-            // If the line contains such strings, skip writing it to the output file
-            continue; // Skip processing for this line
-        }
-
-        // Tokenize the line to check the 4th column
-        char *token = strtok(line, "\t");
-        int column_count = 1;
-
-        while (token != NULL) {
-            if (column_count == 4) {
-                // Check if the 4th column contains more than two alphabets
-                int alphabet_count = 0;
-                for (int i = 0; token[i] != '\0'; i++) {
-                    if (isalpha(token[i])) {
-                        alphabet_count++;
-                    }
-                }
-                if (alphabet_count > 2) {
-                    fprintf(outputFile, "--\n"); // Write "--" if more than two alphabets found
-                    break;
-                }
-            }
-
-            // Write the token to the output file
-            fprintf(outputFile, "%s", token);
-
-            // Move to the next token
-            token = strtok(NULL, "\t");
-
-            // Write a tab delimiter if not at the end of the line
-            if (token != NULL) {
-                fprintf(outputFile, "\t");
-            }
-
-            column_count++;
-        }
-    }
-
-    // Closing files
-    fclose(inputFile);
-    fclose(outputFile);
-
-    printf("File conversion done successfully!\n");
 }
