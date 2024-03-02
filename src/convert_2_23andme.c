@@ -10,13 +10,13 @@ void convertAncestryDNA();
 void convertFTDNA_MyHeritage(char *file_type);
 void convertMapMyGenome();
 void convertLivingDNA();
-void convertFamilyFinder();
+void convertFamFinder();
 
 int main() {
     char file_type[200];
 
     // Prompting user for file type
-    printf("Enter the file type (AncestryDNA, FTDNA_new, FTDNA_old, MyHeritage, Mapmygenome, LivingDNA, FamilyFinder): ");
+    printf("Enter the file type (AncestryDNA, FTDNA_new, FTDNA_old, MyHeritage, Mapmygenome, LivingDNA, FamFinder): ");
     scanf("%s", file_type);
 
     // Convert file_type to lowercase
@@ -37,8 +37,8 @@ int main() {
         system("python sort.py");
     } else if (strcmp(file_type, "livingdna") == 0) {
         convertLivingDNA();
-        } else if (strcmp(file_type, "familyfinder") == 0) {
-        convertFamilyFinder();
+        } else if (strcmp(file_type, "famfinder") == 0) {
+        convertFamFinder();
         system("python sort.py");
     } else {
         printf("Invalid file type.\n");
@@ -316,7 +316,7 @@ void convertLivingDNA() {
     printf("File conversion done successfully!\n");
 }
 
-void convertFamilyFinder() {
+void convertFamFinder() {
     char inputFileName[MAX_LINE_LENGTH], outputFileName[MAX_LINE_LENGTH];
     FILE *inputFile, *outputFile;
     char line[MAX_LINE_LENGTH];
@@ -332,7 +332,7 @@ void convertFamilyFinder() {
         exit(1);
     }
 
-    // Default output file name for FamilyFinder
+    // Default output file name for FamFinder
     strcpy(outputFileName, "data.txt");
 
     // Opening output file
