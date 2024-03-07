@@ -116,7 +116,6 @@ int main(int argc, char *argv[]) {
                 char command_step4a[MAX_COMMAND_LENGTH];
                 snprintf(command_step4a, MAX_COMMAND_LENGTH, "plink.exe --bfile basic_tmp --exclude %s-merge.missnp --make-bed --allow-no-sex --out basic > " DEV_NULL " 2>&1", output_dataset);
                 run_command(command_step4a);
-
                 run_command(command_step2);
             }
         }
