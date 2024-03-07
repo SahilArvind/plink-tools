@@ -119,7 +119,6 @@ int main(int argc, char *argv[]) {
                 run_command(command_step2);
             }
         }
-    }
 
         char command_step3b[MAX_COMMAND_LENGTH];
             snprintf(command_step3b, MAX_COMMAND_LENGTH, "plink.exe --bfile %s --bmerge basic_tmp.bed basic_tmp.bim basic_tmp.fam --indiv-sort 0 --make-bed --allow-no-sex --out %s > " DEV_NULL " 2>&1", base_dataset, output_dataset);
@@ -131,6 +130,7 @@ int main(int argc, char *argv[]) {
                 run_command(command_step4a);
                 run_command(command_step2);
         }
+    }
 
     delete_files();
 
