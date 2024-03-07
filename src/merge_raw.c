@@ -121,20 +121,16 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    // Construct and run command for step 3b
+
         char command_step3b[MAX_COMMAND_LENGTH];
-        snprintf(command_step3b, MAX_COMMAND_LENGTH, "plink.exe --bfile %s --bmerge basic_tmp.bed basic_tmp.bim basic_tmp.fam --indiv-sort 0 --make-bed --allow-no-sex --out %s > " DEV_NULL " 2>&1", base_dataset, output_dataset);
-        int status_step3 = system(command_step3b);
+            snprintf(command_step3b, MAX_COMMAND_LENGTH, "plink.exe --bfile %s --bmerge basic_tmp.bed basic_tmp.bim basic_tmp.fam --indiv-sort 0 --make-bed --allow-no-sex --out %s > " DEV_NULL " 2>&1", base_dataset, output_dataset);
+            int status_step3b = system(command_step3b);
 
-        // Step 4: Retry with additional commands if step 3 fails
-        if (status_step3 != 0) {
-            // Construct and run command for step 4a
-            char command_step4a[MAX_COMMAND_LENGTH];
-            snprintf(command_step4a, MAX_COMMAND_LENGTH, "plink.exe --bfile basic_tmp --exclude %s-merge.missnp --make-bed --allow-no-sex --out basic > " DEV_NULL " 2>&1", output_dataset);
-            run_command(command_step4a);
-
-            // Retry Step 2
-            run_command(command_step2);
+            if (status_step3b != 0) {
+                char command_step4a[MAX_COMMAND_LENGTH];
+                snprintf(command_step4a, MAX_COMMAND_LENGTH, "plink.exe --bfile basic_tmp --exclude %s-merge.missnp --make-bed --allow-no-sex --out basic > " DEV_NULL " 2>&1", output_dataset);
+                run_command(command_step4a);
+                run_command(command_step2);
         }
 
     delete_files();
